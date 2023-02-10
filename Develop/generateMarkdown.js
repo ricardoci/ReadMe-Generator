@@ -11,25 +11,46 @@ function renderLicenseBadge(license) {
 // If there is no license, return an empty string
 function renderLicenseLink(license) {
   if (license !== "none") {
-    return `${license}`;
+    return ` "https://opensource.org/licenses/MIT"`;
   }
   return "";
 }
 
 // TODO: Create a function that returns the license section of README
 // If there is no license, return an empty string
-function renderLicenseSection(license) {
-  if (license !== "none") {
-    return `![Github license](https://img.shields.io/badge/license-${license}-blue.svg)`;
+function getLicenseSection(data) {
+  // The startsWith() method is used to determine if the string starts with the specified string, in this case, "## license"
+  const licenseIndex = data.findIndex(function(line) {
+    return line.toLowerCase().startsWith("## license");
+  });
+
+  if (licenseIndex === -1) {
+    return "";
   }
-  return "";
+
+  const licenseSection = data.slice(licenseIndex + 1);
+  const endIndex = licenseSection.findIndex(function(line) {
+    return line.startsWith("#");
+  });
+
+  if (endIndex === -1) {
+    return licenseSection.join("\n");
+  } else {
+    return licenseSection.slice(0, endIndex).join("\n");
+  }
 }
+
+      
+  
+
+
+
 
 // TODO: Create a function to generate markdown for README
 function generateMarkdown(data) {
   
   return `# ${data.title}
-  ${renderLicenseBadge(data.license)}
+  
   ## Description
 ${data.description}
 ## Deployed Application URL
@@ -51,6 +72,10 @@ ${data.require}
 ${data.usage}
 ## Contributors
 ${data.contributors}
+## license
+${renderLicenseBadge(data.license)}
+  ${renderLicenseLink(data.license)}
+  
 ## Testing
 ${data.test}
 ## Questions
